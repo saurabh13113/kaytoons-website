@@ -1,113 +1,179 @@
+"use client";
+
+import { useState, useRef } from "react";
 import Image from "next/image";
+import { initializeApp } from "firebase/app";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDNDDlKIM_xYnSo8Djntaqai5-gGe4KLAE",
+  authDomain: "kaykoo-25b27.firebaseapp.com",
+  projectId: "kaykoo-25b27",
+  storageBucket: "kaykoo-25b27.appspot.com",
+  messagingSenderId: "1072509460988",
+  appId: "1:1072509460988:web:50e1f172f19ca21e18d279",
+  measurementId: "G-VTH8MQ0VSC"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
 
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, "default-password");
+      const user = userCredential.user;
+      await set(ref(database, 'signupUsers/' + user.uid), {
+        email: user.email,
+      });
+      setMessage("Sign up successful!");
+    } catch (error) {
+      setMessage(`Error: ${error.message}`);
+    }
+  };
+
+  const playAudio = (audioSrc) => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(audioSrc);
+      audioRef.current.play();
+      setIsPlaying(true);
+      audioRef.current.onended = () => setIsPlaying(false);
+    }
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+
+  const scrollToBottom = () => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div>
+      <header className="fixed top-0 left-0 right-0 bg-white text-white p-4 shadow-lg z-50">
+        <h1 className="text-4xl font-bold text-center text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>K a y    T o o n s</h1>
+      </header>
+      <main className="flex flex-col items-center justify-center min-h-screen pt-24 bg-gradient-to-b from-[#fdfaf4] to-orange-100 p-6">
+        <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-9xl mb-12">
+          <div className="flex flex-col justify-center text-left md:text-left md:mr-12 mb-8 md:mb-0" style={{ padding: '0px 0px' }}>
+            <p className="text-5xl font-bold font-medium text-black mb-4 text-center max-w-1xl" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
+              We reimagined 
+              <br />childrens media
+              <br />
+            </p>
+            <p className="text-5xl text-black font-bold font-medium mb-4 text-center max-w-6xl" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
+              <br />
+              The healthy way:
+              <br /> <span className="text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>without screens.</span>
+            </p>
+            <p className="text-3xl text-black font-medium mb-4 text-center max-w-2xl" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
+              <br />
+              <br />
+              <br />
+              Listen to episodes of our original handmade audio cartoons
+            </p>
+          </div>
+          <div className="flex-shrink-0 md:ml-0 relative" style={{ padding: '0 20px' }}>
+            <Carousel showThumbs={true} showStatus={true} infiniteLoop>
+              <div onClick={() => playAudio('/aud1.wav')} className="relative cursor-pointer">
+                <Image src="/pic1.png" alt="Image 1" width={100} height={100} className="rounded-2xl shadow-2xl" quality={100}/>
+                {!isPlaying && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-orange-500 p-5 rounded-full shadow-lg animate-bounce">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" strokeWidth="2" className="w-12 h-12">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-4.586-2.637a1 1 0 00-1.513.858v5.278a1 1 0 001.513.858l4.586-2.637a1 1 0 000-1.716z" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div onClick={() => playAudio('/aud2.wav')} className="relative cursor-pointer">
+                <Image src="/pic2.png" alt="Image 1" width={120} height={120} className="rounded-2xl shadow-2xl" />
+                {!isPlaying && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-orange-500 p-5 rounded-full shadow-lg animate-bounce">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" strokeWidth="2" className="w-12 h-12">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-4.586-2.637a1 1 0 00-1.513.858v5.278a1 1 0 001.513.858l4.586-2.637a1 1 0 000-1.716z" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div onClick={() => playAudio('/aud3.wav')} className="relative cursor-pointer">
+                <Image src="/pic3.png" alt="Image 2" width={120} height={120} className="rounded-2xl shadow-2xl" />
+                {!isPlaying && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-orange-500 p-5 rounded-full shadow-lg animate-bounce">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" strokeWidth="2" className="w-12 h-12">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-4.586-2.637a1 1 0 00-1.513.858v5.278a1 1 0 001.513.858l4.586-2.637a1 1 0 000-1.716z" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Carousel>
+          </div>
         </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
+        <div className="mt-10 text-center">
+          <button onClick={scrollToBottom} className="text-orange-50 text-2xl font-bold py-4 px-8 rounded-full bg-gradient-to-r from-orange-400 to-orange-600 shadow-lg hover:scale-105 transform transition-transform duration-300 ease-in-out">
+            Learn more
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 inline-block ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+        <p className="text-5xl font-bold text-black font-medium mb-8 text-center max-w-3xl" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
+          <br />
+          <br />
+          <br />
+          <br />
+          Fun and educational entertainment that <span className="text-orange-500">promotes childrens well-being.</span>
+          <br />
+          <br />
+        </p>
+        <div className="bg-white p-12 rounded-2xl shadow-2xl text-center w-full max-w-4xl">
+          <h2 className="text-4xl font-semibold text-orange-500 mb-6" style={{ fontFamily: 'Impact, fantasy' }}>
+            Sign Up For KayToons for Free
           </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+          <p className="text-lg font-medium text-gray-700 mb-8 text-center max-w-3xl">
+            Sign up to the Beta release of KayToons and be the first to know about any updates! 
+            <br /> We will never share your email address with anyone and your confidentiality shall be protected.
+        </p>
+          <form onSubmit={handleSignUp} className="flex flex-row items-center">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="p-4 border border-gray-300 rounded-md w-full mb-4 focus:outline-none focus:ring-2 focus:ring-orange-500 text-black"
+              required
+            />
+            <button
+              type="submit"
+              className="bg-orange-500 text-white py-5 px-20 rounded-md hover:bg-orange-600 transition-colors shadow-md ml-4"
+            >
+              Sign Up
+            </button>
+          </form>
+          {message && <p className="mt-4 text-orange-600 font-semibold">{message}</p>}
+        </div>
+      </main>
+    </div>
   );
 }
