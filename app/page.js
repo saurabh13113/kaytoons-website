@@ -31,15 +31,21 @@ export default function Home() {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    if (email.trim() === "") {
+      alert("Please enter an email address.");
+      return;
+    }
+
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, "default-password");
-      const user = userCredential.user;
-      await set(ref(database, 'signupUsers/' + user.uid), {
-        email: user.email,
+      const database = getDatabase();
+      const userRef = ref(database, 'signupUsers/' + Date.now());
+      await set(userRef, {
+        email: email,
       });
-      setMessage("Sign up successful!");
+      setEmail(""); // Clear the text field
+      alert("Sign up successful!");
     } catch (error) {
-      setMessage(`Error: ${error.message}`);
+      alert(`Error: ${error.message}`);
     }
   };
 
@@ -165,6 +171,7 @@ export default function Home() {
               required
             />
             <button
+              onClick={handleSignUp}
               type="submit"
               className="bg-orange-500 text-white py-5 px-20 rounded-md hover:bg-orange-600 transition-colors shadow-md ml-4"
             >
