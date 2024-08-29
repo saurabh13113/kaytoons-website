@@ -1,15 +1,16 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-auth-domain",
-  projectId: "your-project-id",
-  storageBucket: "your-storage-bucket",
-  messagingSenderId: "your-messaging-sender-id",
-  appId: "your-app-id",
-  databaseURL: "your-database-url",
+  apiKey: "AIzaSyDNDDlKIM_xYnSo8Djntaqai5-gGe4KLAE",
+  authDomain: "kaykoo-25b27.firebaseapp.com",
+  projectId: "kaykoo-25b27",
+  storageBucket: "kaykoo-25b27.appspot.com",
+  messagingSenderId: "1072509460988",
+  appId: "1:1072509460988:web:50e1f172f19ca21e18d279",
+  measurementId: "G-VTH8MQ0VSC"
 };
 
 // Initialize Firebase
@@ -20,5 +21,7 @@ const auth = getAuth(app);
 
 // Initialize Firebase Realtime Database and get a reference to the service
 const database = getDatabase(app);
+const firestore = getFirestore(app);
 
-export { auth, database };
+
+export { auth, database, firestore };
