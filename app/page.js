@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
+import { firestore } from "@/firebase"; // Adjust the path as necessary
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
@@ -29,23 +30,20 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
+  const handleSignUp = async () => {
     if (email.trim() === "") {
       alert("Please enter an email address.");
       return;
     }
 
     try {
-      const database = getDatabase();
-      const userRef = ref(database, 'signupUsers/' + Date.now());
-      await set(userRef, {
-        email: email,
-      });
+      const docRef = doc(collection(firestore, 'signupUsers'), email);
+      await setDoc(docRef, { email: email });
       setEmail(""); // Clear the text field
-      alert("Sign up successful!");
+      alert("Email added successfully!");
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      console.error("Error adding document: ", error);
+      alert("Failed to add email. Please try again.");
     }
   };
 
