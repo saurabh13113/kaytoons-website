@@ -43,7 +43,7 @@ export default function Home() {
       alert("Email added successfully!");
     } catch (error) {
       console.error("Error adding document: ", error);
-      alert("Failed to add email. Please try again.");
+      alert("Failed to add email. Please try again.", error);
     }
   };
 
