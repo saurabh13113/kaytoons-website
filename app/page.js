@@ -53,7 +53,10 @@ const KayToonsLanding = () => {
 
   const playAudio = (audioSrc) => {
     if (audioRef.current) {
-      if (audioRef.current.src !== audioSrc) {
+      const audsrc = audioRef.current.src;
+      const curraud = "/" + audsrc.split('/').pop(); 
+      if (curraud !== audioSrc) {
+        audioRef.current.pause();
         console.log("here1");
         console.log(audioSrc)
         console.log(audioRef.current.src)
