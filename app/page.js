@@ -46,7 +46,7 @@ const KayToonsLanding = () => {
         email: email,
       });
       setEmail(""); // Clear the text field
-      setMessage("Sign up successful!");
+      setMessage("Thanks for signing up. We will reach out with more information about Kaytoons shortly. Have a great day!");
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     }
