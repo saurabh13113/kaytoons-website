@@ -98,7 +98,7 @@ const KayToonsLanding = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#fdfaf4] to-orange-100">
       <header className="bg-white p-4 shadow-md">
-        <h1 className="text-4xl font-bold text-center text-orange-500 ${coiny.classname}">KayToons</h1>
+        <h1 className="text-4xl font-bold text-center text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>KayToons</h1>
       </header>
       
       <main className="container mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between">
