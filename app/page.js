@@ -66,7 +66,6 @@ const KayToonsLanding = () => {
         setIsPlaying(true);
         setCurrentAudio(audioSrc);
       } else {
-        console.log("here2");
         if (isPlaying) {
           audioRef.current.pause();
           setIsPlaying(false);
@@ -76,7 +75,6 @@ const KayToonsLanding = () => {
         }
       }
     } else {
-      console.log("here3");
       audioRef.current = new Audio(audioSrc);
       audioRef.current.play();
       setIsPlaying(true);
