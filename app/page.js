@@ -7,6 +7,8 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, set } from 'firebase/database';
 import { Coiny, Quicksand } from 'next/font/google';
+import { addDoc,collection } from 'firebase/firestore';
+import { db } from '@/firebase';
 
 const coiny = Coiny({ subsets: ['latin'], weight: ['400'] });
 const quicksand = Quicksand({ subsets: ['latin'], weight: ['400', '700'] });
@@ -40,8 +42,7 @@ const KayToonsLanding = () => {
     }
 
     try {
-      const userRef = ref(database, 'signupUsers/' + Date.now());
-      await set(userRef, {
+      await addDoc(collection(db,'signupUsers'), {
         email: email,
       });
       setEmail(""); // Clear the text field
@@ -56,10 +57,6 @@ const KayToonsLanding = () => {
       const audsrc = audioRef.current.src;
       const curraud = "/" + audsrc.split('/').pop(); 
       if (curraud !== audioSrc) {
-        audioRef.current.pause();
-        console.log("here1");
-        console.log(audioSrc)
-        console.log(audioRef.current.src)
         audioRef.current.pause();
         audioRef.current.src = audioSrc;
         audioRef.current.play();
@@ -97,7 +94,7 @@ const KayToonsLanding = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#fdfaf4] to-orange-100">
-      <header className="bg-white p-4 shadow-md">
+      <header className="bg-white p-4 shadow-md ${quicksand.className}">
         <h1 className="text-4xl font-bold text-center text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>KayToons</h1>
       </header>
       
@@ -109,10 +106,10 @@ const KayToonsLanding = () => {
               <br />
               childrens media.
             </h2>
-            <h3 className="text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}" >
+            <h3 className="text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto {coiny.className}" >
               The healthy way:
               <br />
-              <span className="text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>without screens.</span>
+              <span className="text-orange-500 ${quicksand.className}">without screens.</span>
             </h3>
             <p className= "text-3xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}">
               <br />
@@ -198,7 +195,7 @@ const KayToonsLanding = () => {
         </p>
 
       <div className="bg-white p-12 rounded-2xl shadow-2xl text-center w-full max-w-4xl mx-auto mt-16">
-        <h2 className="text-4xl font-semibold text-orange-500 mb-6" style={{ fontFamily: 'Impact, fantasy' }}>
+        <h2 className="text-4xl font-semibold text-orange-500 mb-6 ${quicksand.className}" >
           Sign Up For KayToons for Free
         </h2>
         <p className="text-lg font-medium text-gray-700 mb-8 text-center max-w-3xl">
@@ -214,6 +211,7 @@ const KayToonsLanding = () => {
             required
           />
           <button
+            onClick={handleSignUp}
             type="submit"
             className="bg-orange-500 text-white py-4 px-8 rounded-md hover:bg-orange-600 transition-colors shadow-md max-w-full md:w-auto whitespace-nowrap"
           >
