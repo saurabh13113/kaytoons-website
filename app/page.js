@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
-import Image from "next/image";
-import { firestore } from "@/firebase"; // Adjust the path as necessary
-import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
+import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, set } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDNDDlKIM_xYnSo8Djntaqai5-gGe4KLAE",
@@ -21,164 +19,201 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const database = getDatabase(app);
 
-export default function Home() {
+const KayToonsLanding = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentAudio, setCurrentAudio] = useState(null);
   const audioRef = useRef(null);
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e) => {
+    e.preventDefault();
     if (email.trim() === "") {
-      alert("Please enter an email address.");
+      setMessage("Please enter an email address.");
       return;
     }
 
     try {
-      const docRef = doc(collection(firestore, 'signupUsers'), email);
-      await setDoc(docRef, { email: email });
+      const userRef = ref(database, 'signupUsers/' + Date.now());
+      await set(userRef, {
+        email: email,
+      });
       setEmail(""); // Clear the text field
-      alert("Email added successfully!");
+      setMessage("Sign up successful!");
     } catch (error) {
-      console.error("Error adding document: ", error);
-      alert("Failed to add email. Please try again.", error);
+      setMessage(`Error: ${error.message}`);
     }
   };
 
   const playAudio = (audioSrc) => {
-    if (!audioRef.current) {
+    if (audioRef.current) {
+      if (audioRef.current.src !== audioSrc) {
+        audioRef.current.pause();
+        audioRef.current.src = audioSrc;
+        audioRef.current.play();
+        setIsPlaying(true);
+        setCurrentAudio(audioSrc);
+      } else {
+        if (isPlaying) {
+          audioRef.current.pause();
+          setIsPlaying(false);
+        } else {
+          audioRef.current.play();
+          setIsPlaying(true);
+        }
+      }
+    } else {
       audioRef.current = new Audio(audioSrc);
       audioRef.current.play();
       setIsPlaying(true);
-      audioRef.current.onended = () => setIsPlaying(false);
-    }
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.play();
-      setIsPlaying(true);
+      setCurrentAudio(audioSrc);
     }
   };
 
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.onended = () => {
+        setIsPlaying(false);
+        setCurrentAudio(null);
+      };
+    }
+  }, [currentAudio]);
 
   const scrollToBottom = () => {
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   };
 
   return (
-    <div>
-      <header className="fixed top-0 left-0 right-0 bg-white text-white p-4 shadow-lg z-50">
-        <h1 className="text-4xl font-bold text-center text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>K a y    T o o n s</h1>
+    <div className="min-h-screen bg-gradient-to-b from-[#fdfaf4] to-orange-100">
+      <header className="bg-white p-4">
+        <h1 className="text-4xl font-bold text-center text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>KayToons</h1>
       </header>
-      <main className="flex flex-col items-center justify-center min-h-screen pt-24 bg-gradient-to-b from-[#fdfaf4] to-orange-100 p-6">
-        <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-9xl mb-12">
-          <div className="flex flex-col justify-center text-left md:text-left md:mr-12 mb-8 md:mb-0" style={{ padding: '0px 0px' }}>
-            <p className="text-5xl font-bold font-medium text-black mb-4 text-center max-w-1xl" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
-              We reimagined 
-              <br />childrens media
+      
+      <main className="container mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between">
+        <div className="md:w-1/2 flex justify-center mb-8 md:mb-0">
+          <div className="max-w-md">
+            <h2 className="text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto" style={{ fontFamily: 'Trebuchet MS, sans-serif' }} >
+              We reimagined
               <br />
-            </p>
-            <p className="text-5xl text-black font-bold font-medium mb-4 text-center max-w-6xl" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
-              <br />
+              childrens media.
+            </h2>
+            <h3 className="text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto" style={{ fontFamily: 'Trebuchet MS, sans-serif' }} >
               The healthy way:
-              <br /> <span className="text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>without screens.</span>
-            </p>
-            <p className="text-3xl text-black font-medium mb-4 text-center max-w-2xl" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
               <br />
+              <span className="text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>without screens.</span>
+            </h3>
+            <p className= "text-3xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
               <br />
+              Listen to episodes of our
               <br />
-              Listen to episodes of our original handmade audio cartoons
+              original audio cartoons
             </p>
           </div>
-          <div className="flex-shrink-0 md:ml-0 relative" style={{ padding: '0 20px' }}>
-            <Carousel showThumbs={true} showStatus={true} infiniteLoop>
-              <div onClick={() => playAudio('/aud1.wav')} className="relative cursor-pointer">
-                <Image src="/pic1.png" alt="Image 1" width={100} height={100} className="rounded-2xl shadow-2xl" quality={100}/>
-                {!isPlaying && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-orange-500 p-5 rounded-full shadow-lg animate-bounce">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" strokeWidth="2" className="w-12 h-12">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-4.586-2.637a1 1 0 00-1.513.858v5.278a1 1 0 001.513.858l4.586-2.637a1 1 0 000-1.716z" />
-                      </svg>
-                    </div>
+        </div>
+        
+        <div className="md:w-1/2">
+          <Carousel showThumbs={false} showStatus={false} showArrows={true} infiniteLoop
+            renderArrowPrev={(onClickHandler, hasPrev) => hasPrev && (
+              <button className="absolute top-1/2 -translate-y-1/2 left-4 z-10 p-2 rounded-full bg-white border-2 border-orange-500" onClick={onClickHandler}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="orange" viewBox="0 0 24 24" stroke="currentColor" className="w-8 h-8">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+            renderArrowNext={(onClickHandler, hasNext) => hasNext && (
+              <button className="absolute top-1/2 -translate-y-1/2 right-4 z-10 p-2 rounded-full bg-white border-2 border-orange-500" onClick={onClickHandler}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="orange" viewBox="0 0 24 24" stroke="currentColor" className="w-8 h-8">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+          >
+            <div onClick={() => playAudio('/aud1.wav')} className="relative cursor-pointer">
+              <Image src="/pic1.png" alt="Image 1" width={400} height={400} className="rounded-2xl shadow-2xl" />
+              {(!isPlaying || currentAudio !== '/aud1.wav') && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="bg-orange-500 p-3 rounded-full shadow-lg animate-bounce">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" className="w-12 h-12">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
                   </div>
-                )}
-              </div>
-              <div onClick={() => playAudio('/aud2.wav')} className="relative cursor-pointer">
-                <Image src="/pic2.png" alt="Image 1" width={120} height={120} className="rounded-2xl shadow-2xl" />
-                {!isPlaying && (
+                </div>
+              )}
+            </div>
+            <div onClick={() => playAudio('/aud2.wav')} className="relative cursor-pointer">
+                <Image src="/pic2.png" alt="Image 2" width={400} height={400} className="rounded-2xl shadow-2xl" />
+                {(!isPlaying || currentAudio !== '/aud2.wav') && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-orange-500 p-5 rounded-full shadow-lg animate-bounce">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" strokeWidth="2" className="w-12 h-12">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-4.586-2.637a1 1 0 00-1.513.858v5.278a1 1 0 001.513.858l4.586-2.637a1 1 0 000-1.716z" />
+                    <div className="bg-orange-500 p-3 rounded-full shadow-lg animate-bounce">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" className="w-12 h-12">
+                        <path d="M8 5v14l11-7z" />
                       </svg>
                     </div>
                   </div>
                 )}
               </div>
               <div onClick={() => playAudio('/aud3.wav')} className="relative cursor-pointer">
-                <Image src="/pic3.png" alt="Image 2" width={120} height={120} className="rounded-2xl shadow-2xl" />
-                {!isPlaying && (
+                <Image src="/pic3.png" alt="Image 3" width={400} height={400} className="rounded-2xl shadow-2xl" />
+                {(!isPlaying || currentAudio !== '/aud3.wav') && (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="bg-orange-500 p-5 rounded-full shadow-lg animate-bounce">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" strokeWidth="2" className="w-12 h-12">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-4.586-2.637a1 1 0 00-1.513.858v5.278a1 1 0 001.513.858l4.586-2.637a1 1 0 000-1.716z" />
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" className="w-12 h-12">
+                        <path d="M8 5v14l11-7z" />
                       </svg>
                     </div>
                   </div>
                 )}
               </div>
-            </Carousel>
-          </div>
+          </Carousel>
         </div>
-        <div className="mt-10 text-center">
-          <button onClick={scrollToBottom} className="text-orange-50 text-2xl font-bold py-4 px-8 rounded-full bg-gradient-to-r from-orange-400 to-orange-600 shadow-lg hover:scale-105 transform transition-transform duration-300 ease-in-out">
-            Learn more
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 inline-block ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-        </div>
-        <p className="text-5xl font-bold text-black font-medium mb-8 text-center max-w-3xl" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
-          <br />
+      </main>
+      
+      <footer className="bg-orange-200 p-4 text-center mt-8 rounded-t-3xl">
+        <button onClick={scrollToBottom} className="text-lg font-semibold text-orange-700">
+          Learn more
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </footer>
+
+      <p className="text-5xl font-bold text-gray-700 font-medium mb-8 items-center text-center max-w-4xl mx-auto" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
           <br />
           <br />
           <br />
           Fun and educational entertainment that <span className="text-orange-500">promotes childrens well-being.</span>
           <br />
-          <br />
         </p>
-        <div className="bg-white p-12 rounded-2xl shadow-2xl text-center w-full max-w-4xl">
-          <h2 className="text-4xl font-semibold text-orange-500 mb-6" style={{ fontFamily: 'Impact, fantasy' }}>
-            Sign Up For KayToons for Free
-          </h2>
-          <p className="text-lg font-medium text-gray-700 mb-8 text-center max-w-3xl">
-            Sign up to the Beta release of KayToons and be the first to know about any updates! 
-            <br /> We will never share your email address with anyone and your confidentiality shall be protected.
+
+      <div className="bg-white p-12 rounded-2xl shadow-2xl text-center w-full max-w-4xl mx-auto mt-16">
+        <h2 className="text-4xl font-semibold text-orange-500 mb-6" style={{ fontFamily: 'Impact, fantasy' }}>
+          Sign Up For KayToons for Free
+        </h2>
+        <p className="text-lg font-medium text-gray-700 mb-8 text-center max-w-3xl">
+          Sign up to the Beta release of KayToons and be the first to know about any updates! 
         </p>
-          <form onSubmit={handleSignUp} className="flex flex-row items-center">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="p-4 border border-gray-300 rounded-md w-full mb-4 focus:outline-none focus:ring-2 focus:ring-orange-500 text-black"
-              required
-            />
-            <button
-              onClick={handleSignUp}
-              type="submit"
-              className="bg-orange-500 text-white py-5 px-20 rounded-md hover:bg-orange-600 transition-colors shadow-md ml-4"
-            >
-              Sign Up
-            </button>
-          </form>
-          {message && <p className="mt-4 text-orange-600 font-semibold">{message}</p>}
-        </div>
-      </main>
+        <form onSubmit={handleSignUp} className="flex flex-col md:flex-row items-center">
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="p-4 border border-gray-300 rounded-md w-full mb-4 md:mb-0 md:mr-4 focus:outline-none focus:ring-2 focus:ring-orange-500 text-black"
+            required
+          />
+          <button
+            type="submit"
+            className="bg-orange-500 text-white py-4 px-8 rounded-md hover:bg-orange-600 transition-colors shadow-md max-w-full md:w-auto whitespace-nowrap"
+          >
+            Sign Up
+          </button>
+        </form>
+        {message && <p className="mt-4 text-orange-600 font-semibold">{message}</p>}
+      </div>
     </div>
   );
-}
+};
+
+export default KayToonsLanding;
