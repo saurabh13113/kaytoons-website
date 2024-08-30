@@ -6,6 +6,10 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, set } from 'firebase/database';
+import { Coiny, Quicksand } from 'next/font/google';
+
+const coiny = Coiny({ subsets: ['latin'], weight: ['400'] });
+const quicksand = Quicksand({ subsets: ['latin'], weight: ['400', '700'] });
 
 const firebaseConfig = {
   apiKey: "AIzaSyDNDDlKIM_xYnSo8Djntaqai5-gGe4KLAE",
@@ -50,12 +54,16 @@ const KayToonsLanding = () => {
   const playAudio = (audioSrc) => {
     if (audioRef.current) {
       if (audioRef.current.src !== audioSrc) {
+        console.log("here1");
+        console.log(audioSrc)
+        console.log(audioRef.current.src)
         audioRef.current.pause();
         audioRef.current.src = audioSrc;
         audioRef.current.play();
         setIsPlaying(true);
         setCurrentAudio(audioSrc);
       } else {
+        console.log("here2");
         if (isPlaying) {
           audioRef.current.pause();
           setIsPlaying(false);
@@ -65,6 +73,7 @@ const KayToonsLanding = () => {
         }
       }
     } else {
+      console.log("here3");
       audioRef.current = new Audio(audioSrc);
       audioRef.current.play();
       setIsPlaying(true);
@@ -87,24 +96,24 @@ const KayToonsLanding = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#fdfaf4] to-orange-100">
-      <header className="bg-white p-4">
-        <h1 className="text-4xl font-bold text-center text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>KayToons</h1>
+      <header className="bg-white p-4 shadow-md">
+        <h1 className="text-4xl font-bold text-center text-orange-500 ${coiny.classname}">KayToons</h1>
       </header>
       
       <main className="container mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between">
         <div className="md:w-1/2 flex justify-center mb-8 md:mb-0">
           <div className="max-w-md">
-            <h2 className="text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto" style={{ fontFamily: 'Trebuchet MS, sans-serif' }} >
+            <h2 className="text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}" >
               We reimagined
               <br />
               childrens media.
             </h2>
-            <h3 className="text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto" style={{ fontFamily: 'Trebuchet MS, sans-serif' }} >
+            <h3 className="text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}" >
               The healthy way:
               <br />
               <span className="text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>without screens.</span>
             </h3>
-            <p className= "text-3xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
+            <p className= "text-3xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}">
               <br />
               Listen to episodes of our
               <br />
@@ -170,7 +179,7 @@ const KayToonsLanding = () => {
         </div>
       </main>
       
-      <footer className="bg-orange-200 p-4 text-center mt-8 rounded-t-3xl">
+      <footer className="bg-orange-200 p-4 text-center mt-8 rounded-t-3xl ${quicksand.className}">
         <button onClick={scrollToBottom} className="text-lg font-semibold text-orange-700">
           Learn more
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -179,7 +188,7 @@ const KayToonsLanding = () => {
         </button>
       </footer>
 
-      <p className="text-5xl font-bold text-gray-700 font-medium mb-8 items-center text-center max-w-4xl mx-auto" style={{ fontFamily: 'Trebuchet MS, sans-serif' }}>
+      <p className="text-5xl font-bold text-gray-700 font-medium mb-8 items-center text-center max-w-4xl mx-auto ${quicksand.className}">
           <br />
           <br />
           <br />
@@ -212,6 +221,12 @@ const KayToonsLanding = () => {
         </form>
         {message && <p className="mt-4 text-orange-600 font-semibold">{message}</p>}
       </div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
   );
 };
