@@ -46,7 +46,7 @@ const KayToonsLanding = () => {
         email: email,
       });
       setEmail(""); // Clear the text field
-      setMessage("Thanks for signing up. We will reach out with more information about Kaytoons shortly. Have a great day!");
+      setMessage("Sign up successful!");
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     }
@@ -95,23 +95,23 @@ const KayToonsLanding = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#fdfaf4] to-orange-100">
       <header className="bg-white p-4 shadow-md ${quicksand.className}">
-        <h1 className="text-4xl font-bold text-center text-orange-500" style={{ fontFamily: 'Impact, fantasy' }}>KayToons</h1>
+        <h1 className={`text-4xl font-bold text-orange-500 text-center font-medium ${coiny.className}`}>KayToons</h1>
       </header>
       
       <main className="container mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between">
         <div className="md:w-1/2 flex justify-center mb-8 md:mb-0">
           <div className="max-w-md">
-            <h2 className="text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}" >
-              We reimagined
-              <br />
-              childrens media.
-            </h2>
-            <h3 className="text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto {coiny.className}" >
+          <h2 className={`text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}`}>
+            We reimagined
+            <br />
+            children&#39;s media.
+          </h2>
+            <h3 className={`text-5xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}`} >
               The healthy way:
               <br />
-              <span className="text-orange-500 ${quicksand.className}">without screens.</span>
+              <span className={`text-5xl font-bold text-orange-500 font-medium mb-8 max-w-4xl mx-auto ${coiny.className}`}>without screens.</span>
             </h3>
-            <p className= "text-3xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}">
+            <p className={`text-3xl font-bold text-gray-700 font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}`}>
               <br />
               Listen to episodes of our
               <br />
@@ -190,7 +190,7 @@ const KayToonsLanding = () => {
           <br />
           <br />
           <br />
-          Fun and educational entertainment that <span className="text-orange-500">promotes childrens well-being.</span>
+          Fun and educational entertainment that <span className="text-orange-500">promotes children&#39;s well-being.</span>
           <br />
         </p>
 
