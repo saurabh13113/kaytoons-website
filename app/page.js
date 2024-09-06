@@ -186,7 +186,7 @@ const KayToonsLanding = () => {
         </button>
       </footer>
 
-      <p className="text-5xl font-bold text-gray-700 font-medium mb-8 items-center text-center max-w-4xl mx-auto ${quicksand.className}">
+      <p className={`text-5xl font-bold text-gray-700 text-center font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}`}>
           <br />
           <br />
           <br />
@@ -195,10 +195,10 @@ const KayToonsLanding = () => {
         </p>
 
       <div className="bg-white p-12 rounded-2xl shadow-2xl text-center w-full max-w-4xl mx-auto mt-16">
-        <h2 className="text-4xl font-semibold text-orange-500 mb-6 ${quicksand.className}" >
+        <h2 className= {`text-4xl font-bold text-orange-500 font-medium mb-8 max-w-4xl mx-auto ${coiny.className}`} >
           Sign Up For KayToons for Free
         </h2>
-        <p className="text-lg font-medium text-gray-700 mb-8 text-center max-w-3xl">
+        <p className={`text-xl font-bold text-gray-700 text-center font-medium mb-8 max-w-4xl mx-auto ${quicksand.className}`}>
           Sign up to the Beta release of KayToons and be the first to know about any updates! 
         </p>
         <form onSubmit={handleSignUp} className="flex flex-col md:flex-row items-center">
